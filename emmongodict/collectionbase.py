@@ -11,9 +11,9 @@ conn = Connection(max_pool_size=40, network_timeout=1000)
 def collection_do(operate):
     '''wrapper for mongodb operation
     '''
-    def wrapper(db_name, collection_name, *args, **kargs):
-        db = conn[db_name]
-        collection = db[collection_name]
+    def wrapper(db, collection, *args, **kargs):
+        db = conn[db]
+        collection = db[collection]
         ret = operate(collection, *args, **kargs)
         conn.end_request()
         return ret
@@ -32,9 +32,10 @@ def get_dict_property(doc, names):
     else:
         return get_dict_property(to, names[1])
 
-auto_operations = ('save', 'update', 'remove', 'drop', 'find', 'find_one', 
-                   'count', 'create_index', 'ensure_index', 'drop_index',
-                   'drop_indexes', 'reindex', 'index_information', 'options',
+auto_operations = ('insert', 'save', 'update', 'remove', 'drop', 'find', 
+                   'find_one', 'count', 'create_index', 'ensure_index', 
+                   'drop_index', 'drop_indexes', 'reindex', 
+                   'index_information', 'options',
                    'group', 'rename', 'distinct', 'map_reduce', 
                    'inline_map_reduce', 'find_and_modify', 'aggregate')
 
@@ -53,24 +54,38 @@ def collection_%s(collection_obj, *args, **kwargs):
 
 
 @collection_do
-def collection_inc(collection_obj, query, valname, step, **kwargs):
-    return collection_obj.update(query, {'$inc':{valname:step}})
+def collection_inc(collection_obj, spec, key, step, **kwargs):
+    return collection_obj.update(spec, {'$inc':{key:step}})
+
 
 @collection_do
-def collection_incb(collection_obj, query, valname, step=1, **kwargs):
-    res_dict = collection_obj.find_and_modify(query, fields={valname:1},    
-                    update={'$inc':{valname:step}}, **kwargs)
-    return get_dict_property(res_dict, valname)
+def collection_incb(collection_obj, query, key, step=1, **kwargs):
+    res_dict = collection_obj.find_and_modify(query, fields={key:1},    
+                    update={'$inc':{key:step}}, **kwargs)
+    return get_dict_property(res_dict, key)
+
 
 @collection_do
-def collection_inca(collection_obj, query, valname, step=1, **kwargs):
-    res_dict = collection_obj.find_and_modify(query, fields={valname:1},    
-                    update={'$inc':{valname:step}}, new=True, **kwargs)
-    return get_dict_property(res_dict, valname)
+def collection_inca(collection_obj, query, key, step=1, **kwargs):
+    res_dict = collection_obj.find_and_modify(query, fields={key:1},    
+                    update={'$inc':{key:step}}, new=True, **kwargs)
+    return get_dict_property(res_dict, key)
+
+
+@collection_do
+def collection_delete_keys(collection_obj, keys, spec, **kwargs):
+    '''keys: tuple'''
+    doc = dict((ek, 1) for ek in keys)
+    return collection_obj.update(spec, {'$unset':doc})
 
 ###########################################
 #auto code below
 ###########################################
+
+@collection_do
+def collection_insert(collection_obj, *args, **kwargs):
+    return collection_obj.insert(*args, **kwargs)
+
 
 @collection_do
 def collection_save(collection_obj, *args, **kwargs):
