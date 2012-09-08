@@ -46,7 +46,7 @@ class EmMongoDict(object):
         return True
 
     def subdict(self, subpath):
-        return EmMongoDict(spec=self.spec, path=self.path+'.'+subpath,
+        return self.__class__(spec=self.spec, path=self.path+'.'+subpath,
                         **self.db_info)
 
     def sublist(self, subpath):

@@ -6,16 +6,20 @@ you should replace the argument collection as (db_name, collection_name)
 '''
 
 #connection_pool
-conn = Connection(max_pool_size=40, network_timeout=1000)
+conn = [Connection(max_pool_size=40, network_timeout=1000)]
+
+def reconnect(*args, **kwargs):
+    conn[0].close()
+    conn[0] = Connection(*args, **kwargs)
 
 def collection_do(operate):
     '''wrapper for mongodb operation
     '''
     def wrapper(db, collection, *args, **kargs):
-        db = conn[db]
+        db = conn[0][db]
         collection = db[collection]
         ret = operate(collection, *args, **kargs)
-        conn.end_request()
+        conn[0].end_request()
         return ret
     return wrapper
 
