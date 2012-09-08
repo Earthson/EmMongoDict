@@ -9,8 +9,10 @@ you should replace the argument collection as (db_name, collection_name)
 conn = [Connection(max_pool_size=40, network_timeout=1000)]
 
 def reconnect(*args, **kwargs):
-    conn[0].close()
-    conn[0] = Connection(*args, **kwargs)
+    try:
+        conn[0].close()
+    finally:
+        conn[0] = Connection(*args, **kwargs)
 
 def collection_do(operate):
     '''wrapper for mongodb operation
