@@ -16,14 +16,14 @@ class EmMongoDict(object):
                         db=None, collection=None):
         '''
         '''
-        self.db_info = dict(EmMongoDict.db_info)
+        self.db_info = dict(self.db_info)
         if collection is not None:
             self.db_info['collection'] = collection
         if db is not None:
             self.db_info['db'] = db
         self.spec = spec
         self.path = path
-        if self.spec is None:
+        if not self.spec:
             if doc is None:
                 doc = dict()
             self.spec = {'_id':collection_insert(doc_or_docs=doc, 
@@ -62,12 +62,15 @@ class EmMongoDict(object):
 
     @classmethod
     def drop(cls):
-        collection_drop(**self.db_info)
+        collection_drop(**cls.db_info)
 
     @classmethod
     def ensure_index(cls):
-        collection_ensure_index(key_or_list=cls.indexes.items(),
-                                **self.db_info)
+        for ek, ev in cls.indexes.items():
+            info = dict(cls.db_info)
+            info.update(ev)
+            collection_ensure_index(key_or_list=ek,
+                                **info)
 
     def __getitem__(self, key):
         toget = key
@@ -151,11 +154,11 @@ class EmMongoDict(object):
         return get_dict_property(ret, self.path)
 
     @classmethod
-    def load_docs(self, spec_key=None, spec_values=None):
+    def load_docs(cls, spec_key=None, spec_values=None):
         if spec_key is None and spec_values is None:
-            return collection_find(**self.db_info)
+            return collection_find(**cls.db_info)
         return collection_find(spec={spec_key:{'$in':spec_values}},
-                                **self.db_info)
+                                **cls.db_info)
         
     def __iter__(self):
         doc = self.load_doc()

@@ -10,7 +10,7 @@ class EmMongoList(object):
 
     def __init__(self, spec, path, db=None, collection=None):
         '''path and spec should not be None'''
-        self.db_info = dict(EmMongoList.db_info)
+        self.db_info = dict(self.db_info)
         if collection is not None:
             self.db_info['collection'] = collection
         if db is not None:
