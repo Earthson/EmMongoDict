@@ -80,16 +80,26 @@ class EmMongoList(object):
                         document={'$pushAll':{self.path:objs}}, **self.db_info)
 
     def pop(self):
-        return collection_update(spec=self.spec,
-                        document={'$pop':{self.path:1}}, **self.db_info)
+        ret = collection_find_and_modify(query=self.spec, 
+                update={'$pop':{self.path:1}}, 
+                fields={self.path:{'$slice':[-1, 1]}}, **self.db_info)
+        try:
+            return get_dict_property(ret, self.path)[0]
+        except:
+            return None
 
     def pop_head(self):
-        return collection_update(spec=self.spec,
-                        document={'$pop':{self.path:-1}}, **self.db_info)
+        ret = collection_find_and_modify(query=self.spec, 
+                update={'$pop':{self.path:-1}}, 
+                fields={self.path:{'$slice':[0, 1]}}, **self.db_info)
+        try:
+            return get_dict_property(ret, self.path)[0]
+        except:
+            return None
 
     def pull(self, *objs):
         return collection_update(spec=self.spec,
-                        document={'pullAll':{self.path:objs}}, **self.db_info)
+                        document={'$pullAll':{self.path:objs}}, **self.db_info)
 
     def __len__(self):
         return len(self.load_list())

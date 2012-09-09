@@ -32,6 +32,7 @@ class EmMongoDict(object):
             self.update(doc)
 
     def is_exist(self):
+        '''test whether spec is in db'''
         ret = collection_find_one(spec_or_id=self.spec, fields={'_id':1}, 
                                                 **self.db_info)
         return ret is not None
@@ -46,13 +47,13 @@ class EmMongoDict(object):
         return True
 
     def subdict(self, subpath):
-        return self.__class__(spec=self.spec, path=self.path+'.'+subpath,
-                        **self.db_info)
+        path = subpath if not self.path else self.path+'.'+subpath
+        return self.__class__(spec=self.spec, path=path, **self.db_info)
 
     def sublist(self, subpath):
         from emmongolist import EmMongoList
-        return EmMongoList(spec=self.spec, path=self.path+'.'+subpath,
-                        **self.db_info)
+        path = subpath if not self.path else self.path+'.'+subpath
+        return EmMongoList(spec=self.spec, path=path, **self.db_info)
 
     @classmethod
     def init_collection(cls):
