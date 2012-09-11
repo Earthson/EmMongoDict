@@ -81,7 +81,7 @@ Important Points
 * **'_id'** is default member in EmMongoDict, with `your_dict['_id']` to get it. with `EmMongoDict(doc={'_id':your_id})`, you could specify it by yourself, rather than auto generate by MongoDB.
 * key of EmMongoDict can be string only, do not use **'.'** and **'$'** in your key. If you do not familar to MongoDB, it would lead you to confusion.
 * with key not exist in EmMongoDict, `your_dict[key]` do not raise `KeyError`, it will return None
-* with `self.load_doc()` you could get a Cursor instance to the Document you queryed. use `self.load_list()` in EmMongoList.
+* with `self.load_doc()` you could get a dict instance to the Document you queryed. use `self.load_list()` in EmMongoList for a list instance.
 
 
 Create EmMongoDict Instance
