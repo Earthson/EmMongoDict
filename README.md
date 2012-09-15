@@ -145,6 +145,6 @@ u'a@a.com'
 {u'_id': ObjectId('504c3c79b45d6a1578000005'), u'email': u'b@b.com'}
 ```
 
-With `cls.indexes` you could set the index information of class. index infomation is formatted by `indexname:propertyes_dict`. you could get more help from MongoDB Document.
+With `cls.indexes` you could set the index information of class. index infomation is formatted by `indexname:propertyes_dict`. you could get more help from MongoDB Documentation.
 
 **Do not forget to make index work by `cls.ensure_index()`**
