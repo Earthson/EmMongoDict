@@ -13,10 +13,11 @@ def reconnect(*args, **kwargs):
 def auto_coll_do(operate):
     '''wrapper for mongodb operation
     need:
-        self.db_info = {
+        obj.db_info = {
                 'db':db_name,
                 'collection':collection_name,
             }
+        obj.coll
     '''
     def wrapper(obj, *args, **kwargs):
         if obj.coll is not None:
