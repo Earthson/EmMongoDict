@@ -1,5 +1,4 @@
 from pymongo import *
-from bson import *
 
 conn = [Connection(max_pool_size=20, network_timeout=1000)]
 
@@ -20,13 +19,16 @@ def auto_coll_do(operate):
         obj.coll
     '''
     def wrapper(obj, *args, **kwargs):
-        if obj.coll is None:
-            db, coll = obj.db_info['db'], obj.db_info['collection']
-            obj.coll = conn[0][db][coll]
-        ret = operate(obj, *args, **kwargs)
-#        obj.coll = None
-        conn[0].end_request()
-        return ret
+        try:
+            if obj.coll is None:
+                db, coll = obj.db_info['db'], obj.db_info['collection']
+                obj.coll = conn[0][db][coll]
+            ret = operate(obj, *args, **kwargs)
+            conn[0].end_request()
+            return ret
+        except errors.AutoReconnect as e:
+            print(e)
+            return wrapper(obj, *args, **kwargs)
     return wrapper
 
 
