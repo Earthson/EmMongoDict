@@ -53,9 +53,9 @@ class EmMongoDict(object):
         return True
 
     @auto_coll_do
-    def mongo_update(self, *args, *kwargs):
+    def mongo_update(self, *args, **kwargs):
         '''same as update in pymongo'''
-        return self.coll.update(*args, *kwargs)
+        return self.coll.update(*args, **kwargs)
 
     @auto_coll_do
     def subdict(self, subpath):

@@ -20,12 +20,11 @@ def auto_coll_do(operate):
         obj.coll
     '''
     def wrapper(obj, *args, **kwargs):
-        if obj.coll is not None:
-            return operate(obj, *args, **kwargs)
-        db, coll = obj.db_info['db'], obj.db_info['collection']
-        obj.coll = conn[0][db][coll]
+        if obj.coll is None:
+            db, coll = obj.db_info['db'], obj.db_info['collection']
+            obj.coll = conn[0][db][coll]
         ret = operate(obj, *args, **kwargs)
-        obj.coll = None
+#        obj.coll = None
         conn[0].end_request()
         return ret
     return wrapper
