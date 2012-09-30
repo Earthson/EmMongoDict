@@ -3,6 +3,7 @@ from connbase import *
 class EmMongoDict(object):
     '''
     '''
+    datatype = None
     db_info = {
         'db':'EmMongoDict',
         'collection':'EmMongoDict',
@@ -33,8 +34,11 @@ class EmMongoDict(object):
             self.update(doc)
 
     @auto_coll_do
-    def new_doc(self, doc={}):
-        return self.coll.insert(doc_or_docs=doc)
+    @classmethod
+    def new_doc(cls, doc={}):
+        if cls.datatype:
+            return cls.datatype()['_id']
+        return cls.coll.insert(doc_or_docs=doc)
 
     @auto_coll_do
     def is_exist(self):
