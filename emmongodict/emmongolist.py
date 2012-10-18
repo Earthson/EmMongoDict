@@ -111,13 +111,16 @@ class EmMongoList(object):
                         document={'$pullAll':{self.path:objs}})
 
     def __len__(self):
-        return len(self.load_list())
+        tmp = self.load_list()
+        if tmp: return len(tmp)
+        return None
 
     @auto_coll_do
     def load_list(self):
         '''load list as an instance of list'''
         ret = self.coll.find_one(spec_or_id=self.spec, fields={self.path:1})
-        return get_dict_property(ret, self.path)
+        if ret: return get_dict_property(ret, self.path)
+        return None
 
     @auto_coll_do
     def remove(self):
