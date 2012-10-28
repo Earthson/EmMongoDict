@@ -211,7 +211,9 @@ class EmMongoDict(object):
 
     def __len__(self):
         doc = self.load_doc()
-        return len(doc)
+        if doc is not None:
+            return len(doc)
+        return 0
 
     def __contains__(self, item):
         return self[item] is not None
