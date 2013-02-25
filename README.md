@@ -3,6 +3,12 @@ EmMongoDict Usage
 
 EmMongoDict create dict/list like interface for MongoDB in Python. based on pymongo.
 
+EmMongoDict not own any data in MongoDB except spec_info. It is the most diffrence to typical ORMs. 
+All operations are direct to MongoDB.
+
+It is designed to use when you need global dict/list support with MongoDB, When the Document is large and 
+may called by several threads.
+
 
 Basic Dict/List Usage
 ---------------------
